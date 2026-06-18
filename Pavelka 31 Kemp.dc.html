@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #0A0A0A; color: #fff; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { overflow-x: hidden; }
+    ::selection { background: #CE1126; color: #fff; }
+    .ph-stripes { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.025) 0 14px, rgba(255,255,255,0.05) 14px 28px); background-color: #161616; }
+    .ph-stripes-red { background-image: repeating-linear-gradient(135deg, rgba(206,17,38,0.06) 0 14px, rgba(206,17,38,0.12) 14px 28px); background-color: #1a0a0c; }
+    /* Reveal — jednorázová CSS animace při vykreslení sekce. Vždy končí viditelně,
+       žádný JS ani třídy navíc → obsah NIKDY nezůstane skrytý a React nic nestrhne. */
+    @keyframes p31reveal { from { transform: translateY(24px); } to { transform: translateY(0); } }
+    [data-reveal] { opacity: 1 !important; animation: p31reveal .7s cubic-bezier(.2,.6,.2,1) both; }
+    @media (prefers-reduced-motion: reduce) { [data-reveal] { animation: none; } }
+    /* Pulse for live dot */
+    @keyframes p31pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+    .pulse-dot { animation: p31pulse 2s ease-in-out infinite; }
+    /* Mobile */
+    .nav-desktop { display: flex; }
+    .nav-hamburger { display: none; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+    .grid-camps-detail { display: grid; grid-template-columns: 110px 1fr 200px 180px; gap: 32px; align-items: center; }
+    .grid-footer { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 56px; }
+    .masonry { columns: 4; column-gap: 12px; }
+    @media (max-width: 900px) {
+      .nav-desktop { display: none !important; }
+      .nav-hamburger { display: flex !important; }
+      .grid-2 { grid-template-columns: 1fr !important; gap: 40px !important; }
+      .grid-camps-detail { grid-template-columns: 1fr !important; gap: 20px !important; }
+      .grid-footer { grid-template-columns: 1fr 1fr !important; gap: 32px !important; }
+      .masonry { columns: 2 !important; }
+      .pad-section { padding-left: 20px !important; padding-right: 20px !important; }
+      .h1-mobile { font-size: 56px !important; }
+    }
+    @media (max-width: 560px) {
+      .grid-footer { grid-template-columns: 1fr !important; }
+      .masonry { columns: 1 !important; }
+    }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; background: #0A0A0A; color: #fff; font-family: 'Inter', system-ui, sans-serif; position: relative; overflow-x: hidden;">
+
+  <!-- ============== NAVBAR ============== -->
+  <nav style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; background: rgba(10,10,10,0.78); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.06);">
+    <button onClick="{{ goHome }}" style="display: flex; align-items: center; gap: 12px; background: none; border: none; cursor: pointer; padding: 0;">
+      <div style="width: 42px; height: 42px; border: 1.5px solid #CE1126; display: flex; align-items: center; justify-content: center; position: relative; background: #0A0A0A;">
+        <span style="font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #fff; letter-spacing: 0.02em; line-height: 1;">31</span>
+        <div style="position: absolute; top: -3px; right: -3px; width: 6px; height: 6px; background: #CE1126;"></div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-start; line-height: 1;">
+        <span style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.12em; color: #fff;">PAVELKA</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.3em; color: #B0B0B0; margin-top: 2px;">GOALIE CAMP</span>
+      </div>
+    </button>
+
+    <!-- Desktop nav -->
+    <div class="nav-desktop" style="align-items: center; gap: 4px;">
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+        <button onClick="{{ item.onClick }}" style="background: none; border: none; cursor: pointer; padding: 10px 16px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: {{ item.color }}; position: relative; transition: color .2s;" style-hover="color: #fff;">
+          {{ item.label }}
+          <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
+            <span style="position: absolute; bottom: 4px; left: 16px; right: 16px; height: 1.5px; background: #CE1126;"></span>
+          </sc-if>
+        </button>
+      </sc-for>
+      <button onClick="{{ goTerminy }}" style="margin-left: 16px; background: #CE1126; border: none; cursor: pointer; padding: 12px 22px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #fff; transition: all .2s;" style-hover="background: #A50E1F; box-shadow: 0 0 24px rgba(206,17,38,0.4);">
+        Registrace →
+      </button>
+    </div>
+
+    <!-- Mobile hamburger -->
+    <button onClick="{{ toggleMenu }}" class="nav-hamburger" style="background: none; border: 1px solid rgba(255,255,255,0.15); cursor: pointer; width: 44px; height: 44px; align-items: center; justify-content: center; flex-direction: column; gap: 5px; padding: 0;">
+      <span style="width: 18px; height: 1.5px; background: #fff; display: block; transition: all .2s; transform: {{ hamTop }};"></span>
+      <span style="width: 18px; height: 1.5px; background: #fff; display: block; opacity: {{ hamMidOpacity }};"></span>
+      <span style="width: 18px; height: 1.5px; background: #fff; display: block; transition: all .2s; transform: {{ hamBot }};"></span>
+    </button>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeMenu }}" style="position: fixed; inset: 78px 0 0 0; z-index: 99; background: rgba(10,10,10,0.96); backdrop-filter: blur(16px); padding: 40px 24px;">
+      <div onClick="{{ stopProp }}" style="display: flex; flex-direction: column; gap: 4px; max-width: 480px; margin: 0 auto;">
+        <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+          <button onClick="{{ item.mobileClick }}" style="background: none; border: none; cursor: pointer; padding: 24px 8px; font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 0.02em; color: {{ item.color }}; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
+            <span>{{ item.label }}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #CE1126;">→</span>
+          </button>
+        </sc-for>
+        <button onClick="{{ mobileGoTerminy }}" style="margin-top: 32px; background: #CE1126; color: #fff; border: none; padding: 20px 24px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;">
+          Registrace →
+        </button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============== HOMEPAGE ============== -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div>
+
+    <!-- HERO -->
+    <section class="pad-section" style="min-height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; padding: 120px 32px 80px; overflow: hidden;">
+      <div style="position: absolute; inset: 0; background: radial-gradient(ellipse 80% 50% at 50% 100%, rgba(206,17,38,0.12), transparent 70%), radial-gradient(ellipse 60% 40% at 20% 30%, rgba(120,180,255,0.04), transparent 70%); pointer-events: none;"></div>
+      <div aria-hidden="true" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Bebas Neue', sans-serif; font-size: clamp(400px, 60vw, 900px); line-height: 0.8; color: #CE1126; opacity: 0.06; pointer-events: none; user-select: none; letter-spacing: -0.04em;">31</div>
+      <div aria-hidden="true" style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 80px 80px; pointer-events: none; mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 30%, transparent 80%);"></div>
+
+      <div style="position: relative; max-width: 1100px; text-align: center; z-index: 2;">
+        <div style="display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.02); backdrop-filter: blur(8px); margin-bottom: 32px;">
+          <span class="pulse-dot" style="width: 6px; height: 6px; background: #CE1126; border-radius: 50%;"></span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; color: #B0B0B0; text-transform: uppercase;">Léto 2026 · Registrace otevřena</span>
+        </div>
+
+        <h1 class="h1-mobile" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 11vw, 180px); line-height: 0.88; letter-spacing: 0.005em; margin: 0; color: #fff; font-weight: 400;">
+          Pavelka<br>
+          <span style="display: inline-block;">
+            <span style="color: #CE1126;">31</span>
+            <span style="color: #fff;"> Kemp</span>
+          </span>
+        </h1>
+
+        <p style="max-width: 640px; margin: 36px auto 0; font-size: 18px; line-height: 1.55; color: #B0B0B0;">
+          Brankářský kemp Jaroslava Pavelky. Individuální trénink, video analýza a mentoring od profesionála.
+        </p>
+
+        <div style="display: flex; gap: 14px; justify-content: center; margin-top: 44px; flex-wrap: wrap;">
+          <button onClick="{{ goTerminy }}" style="background: #CE1126; color: #fff; border: none; padding: 18px 32px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: all .25s; display: inline-flex; align-items: center; gap: 12px;" style-hover="background: #A50E1F; box-shadow: 0 0 40px rgba(206,17,38,0.5); transform: translateY(-2px);">
+            Registrace
+            <span style="font-family: 'JetBrains Mono', monospace;">→</span>
+          </button>
+          <button onClick="{{ scrollToAbout }}" style="background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 18px 32px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: all .25s;" style-hover="border-color: #fff; background: rgba(255,255,255,0.04);">
+            Více info
+          </button>
+        </div>
+
+        <div style="margin-top: 80px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.06); max-width: 720px; margin-left: auto; margin-right: auto;">
+          <div style="background: #0A0A0A; padding: 18px 12px;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: #CE1126; line-height: 1;">12+</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 6px;">Sezón v profi</div>
+          </div>
+          <div style="background: #0A0A0A; padding: 18px 12px;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: #CE1126; line-height: 1;">200+</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 6px;">Brankářů</div>
+          </div>
+          <div style="background: #0A0A0A; padding: 18px 12px;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: #CE1126; line-height: 1;">4:1</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 6px;">Poměr trenér / brankář</div>
+          </div>
+          <div style="background: #0A0A0A; padding: 18px 12px;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: #CE1126; line-height: 1;">'26</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 6px;">Sezóna</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.3em; color: #B0B0B0; text-transform: uppercase;">Scroll</span>
+        <div style="width: 1px; height: 32px; background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);"></div>
+      </div>
+    </section>
+
+    <!-- ============== O JAROSLAVOVI ============== -->
+    <section id="about-section" class="pad-section" style="padding: 140px 32px; background: #0A0A0A; border-top: 1px solid rgba(255,255,255,0.06); position: relative;" data-reveal>
+      <div style="max-width: 1240px; margin: 0 auto;">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 64px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; color: #CE1126; text-transform: uppercase;">01 / Trenér</span>
+          <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08);"></div>
+        </div>
+
+        <div class="grid-2" style="align-items: start;">
+          <!-- Foto Jaroslava -->
+          <div style="position: relative; aspect-ratio: 4/5; overflow: hidden; background: #161616;">
+            <img src="media/liberec-karta.jpg" alt="Jaroslav Pavelka" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block;">
+            <div style="position: absolute; bottom: -8px; right: -8px; width: 100%; height: 100%; border: 1px solid #CE1126; pointer-events: none; z-index: -1;"></div>
+          </div>
+
+          <!-- Text + timeline -->
+          <div>
+            <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 5vw, 84px); line-height: 0.92; letter-spacing: 0.005em; margin: 0 0 32px; color: #fff; font-weight: 400;">
+              Brankářem<br>se nerodíš.<br><span style="color: #CE1126;">Stáváš se jím.</span>
+            </h2>
+            <div style="font-size: 16px; line-height: 1.75; color: #B0B0B0; max-width: 480px;">
+              <p style="margin: 0 0 20px;">
+                <!-- tohle je jen nástřel bia, ať tam něco je — Jarda dodá vlastní verzi -->
+                <span style="color: #6a6a6a; font-style: italic;">Jaroslav Pavelka prošel mládežnickými reprezentacemi a dnes hájí branku v dresu pražského A‑týmu. Pavelka 31 Kemp založil v roce 2023.</span>
+              </p>
+            </div>
+
+            <!-- Career timeline -->
+            <div style="margin-top: 44px;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #CE1126; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px;">Kariéra · Kluby</div>
+              <div style="display: flex; flex-direction: column; gap: 0; position: relative;">
+                <div style="position: absolute; top: 8px; bottom: 8px; left: 4px; width: 1px; background: rgba(255,255,255,0.1);"></div>
+                <sc-for list="{{ career }}" as="c" hint-placeholder-count="5">
+                  <div style="display: flex; align-items: baseline; gap: 20px; padding: 10px 0; position: relative;">
+                    <span style="width: 9px; height: 9px; background: {{ c.dotColor }}; border-radius: 50%; flex-shrink: 0; position: relative; z-index: 1; box-shadow: 0 0 0 4px #0A0A0A;"></span>
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #B0B0B0; letter-spacing: 0.15em; min-width: 100px;">{{ c.years }}</span>
+                    <span style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; color: #fff;">{{ c.club }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Quote -->
+            <div style="margin-top: 56px; padding: 28px 32px; border-left: 2px solid #CE1126; background: rgba(206,17,38,0.04);">
+              <div style="font-family: 'Bebas Neue', sans-serif; font-size: 64px; line-height: 0.5; color: #CE1126; opacity: 0.6;">"</div>
+              <p style="margin: -10px 0 0; font-family: 'Inter', sans-serif; font-size: 18px; line-height: 1.55; color: #fff; font-style: italic; font-weight: 300;">
+                <!-- vybrat nějakou hezkou hlášku od Jardy -->
+                Když jsem začínal, neměl jsem trenéra, který by se brankářům věnoval naplno. <span style="color: #CE1126;">Pavelka 31 Kemp je odpověď.</span>
+              </p>
+              <div style="margin-top: 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase;">— Jaroslav Pavelka</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== CO KEMP NABÍZÍ ============== -->
+    <section class="pad-section" style="padding: 140px 32px; background: #0A0A0A; border-top: 1px solid rgba(255,255,255,0.06);" data-reveal>
+      <div style="max-width: 1240px; margin: 0 auto;">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; color: #CE1126; text-transform: uppercase;">02 / Program</span>
+          <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08);"></div>
+        </div>
+        <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 6vw, 96px); line-height: 0.92; letter-spacing: 0.005em; margin: 0 0 80px; color: #fff; font-weight: 400; max-width: 900px;">
+          Co kemp <span style="color: #CE1126;">nabízí</span>
+        </h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.06);">
+          <sc-for list="{{ offerings }}" as="offer" hint-placeholder-count="4">
+            <div style="background: #0A0A0A; padding: 40px 32px; transition: background .3s;" style-hover="background: #141414;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #CE1126; letter-spacing: 0.2em; margin-bottom: 24px;">{{ offer.num }}</div>
+              <div style="width: 48px; height: 48px; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 28px;">
+                <span style="font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #fff;">{{ offer.glyph }}</span>
+              </div>
+              <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.02em; margin: 0 0 14px; color: #fff; font-weight: 400; line-height: 1;">{{ offer.title }}</h3>
+              <p style="font-size: 14px; line-height: 1.6; color: #B0B0B0; margin: 0;">{{ offer.desc }}</p>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== NADCHÁZEJÍCÍ TERMÍNY ============== -->
+    <section class="pad-section" style="padding: 140px 32px; background: #0A0A0A; border-top: 1px solid rgba(255,255,255,0.06);" data-reveal>
+      <div style="max-width: 1240px; margin: 0 auto;">
+        <div style="display: flex; align-items: end; justify-content: space-between; margin-bottom: 56px; gap: 32px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 280px;">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; color: #CE1126; text-transform: uppercase;">03 / Termíny</span>
+              <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08); max-width: 200px;"></div>
+            </div>
+            <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 6vw, 96px); line-height: 0.92; letter-spacing: 0.005em; margin: 0; color: #fff; font-weight: 400;">
+              Léto <span style="color: #CE1126;">2026</span>
+            </h2>
+          </div>
+          <button onClick="{{ goTerminy }}" style="background: none; border: 1px solid rgba(255,255,255,0.2); padding: 14px 24px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #fff; cursor: pointer; transition: all .2s;" style-hover="border-color: #CE1126; color: #CE1126;">
+            Všechny termíny →
+          </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+          <sc-for list="{{ campsPreview }}" as="camp" hint-placeholder-count="3">
+            <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); padding: 32px; transition: all .3s; cursor: {{ camp.cursor }};" onClick="{{ camp.onClick }}" style-hover="border-color: rgba(206,17,38,0.4); transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.4);">
+              <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px;">
+                <span style="font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: #fff; line-height: 1; letter-spacing: 0.005em;">{{ camp.dateLabel }}</span>
+              </div>
+              <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.02em; margin: 0 0 6px; color: #fff; font-weight: 400; line-height: 1.1;">{{ camp.title }}</h3>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #B0B0B0; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 24px;">{{ camp.location }} · věk {{ camp.ageCategory }}</div>
+              <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span style="color: #B0B0B0;">Cena</span>
+                  <span style="color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.02em;">{{ camp.price }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span style="color: #B0B0B0;">Obsazenost</span>
+                  <span style="color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 12px;">{{ camp.taken }}/{{ camp.capacity }} míst</span>
+                </div>
+              </div>
+              <div style="margin-bottom: 20px;">
+                <div style="height: 2px; background: rgba(255,255,255,0.08); position: relative; overflow: hidden;">
+                  <div style="position: absolute; top: 0; left: 0; bottom: 0; background: {{ camp.barColor }}; width: {{ camp.fillPercent }}%;"></div>
+                </div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: {{ camp.statusColor }}; letter-spacing: 0.2em; margin-top: 8px; text-transform: uppercase;">{{ camp.statusLabel }}</div>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: {{ camp.ctaColor }};">
+                <span>{{ camp.ctaLabel }}</span>
+                <span style="font-family: 'JetBrains Mono', monospace;">{{ camp.ctaArrow }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== CTA BANNER ============== -->
+    <section class="pad-section" style="padding: 0 32px 140px; background: #0A0A0A;" data-reveal>
+      <div style="max-width: 1240px; margin: 0 auto; background: #141414; border: 1px solid rgba(255,255,255,0.06); padding: 80px 56px; position: relative; overflow: hidden;">
+        <div aria-hidden="true" style="position: absolute; right: -40px; top: 50%; transform: translateY(-50%); font-family: 'Bebas Neue', sans-serif; font-size: 340px; line-height: 0.8; color: #CE1126; opacity: 0.08; pointer-events: none; letter-spacing: -0.04em;">31</div>
+        <div style="position: relative; max-width: 600px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; color: #CE1126; text-transform: uppercase;">Připoj se</span>
+          <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 5vw, 72px); line-height: 0.95; letter-spacing: 0.005em; margin: 16px 0 28px; color: #fff; font-weight: 400;">
+            Pět dní.<br>Tvoje branka.<br>Žádné výmluvy.
+          </h2>
+          <p style="font-size: 16px; line-height: 1.6; color: #B0B0B0; margin: 0 0 36px;">Kapacita je omezená. Jakmile bude tvůj termín plný, půjdeš na čekací listinu.</p>
+          <button onClick="{{ goTerminy }}" style="background: #CE1126; color: #fff; border: none; padding: 18px 32px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: all .25s;" style-hover="background: #A50E1F; box-shadow: 0 0 40px rgba(206,17,38,0.5); transform: translateY(-2px);">
+            Vybrat termín →
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+  </sc-if>
+
+  <!-- ============== PRAVIDLA ============== -->
+  <sc-if value="{{ isPravidla }}" hint-placeholder-val="{{ false }}">
+  <div class="pad-section" style="padding: 140px 32px 120px;">
+    <div style="max-width: 920px; margin: 0 auto;">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; color: #CE1126; text-transform: uppercase;">Dokumenty</span>
+        <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08);"></div>
+      </div>
+      <h1 class="h1-mobile" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px, 8vw, 120px); line-height: 0.9; letter-spacing: 0.005em; margin: 0 0 24px; color: #fff; font-weight: 400;">
+        Pravidla<br><span style="color: #CE1126;">kempu</span>
+      </h1>
+      <p style="font-size: 17px; line-height: 1.6; color: #B0B0B0; max-width: 600px; margin: 0 0 64px;">
+        Přečti si všech 6 sekcí. Registrací s nimi souhlasíš.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 1px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.06);">
+        <sc-for list="{{ rules }}" as="rule" hint-placeholder-count="6">
+          <div style="background: #0A0A0A;">
+            <button onClick="{{ rule.toggle }}" style="width: 100%; background: none; border: none; cursor: pointer; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; text-align: left; transition: background .2s;" style-hover="background: rgba(255,255,255,0.02);">
+              <div style="display: flex; align-items: center; gap: 24px;">
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #CE1126; letter-spacing: 0.2em;">{{ rule.num }}</span>
+                <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 0.02em; margin: 0; color: #fff; font-weight: 400; line-height: 1;">{{ rule.title }}</h3>
+              </div>
+              <div style="width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .25s; transform: rotate({{ rule.rot }}deg);">
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #fff;">+</span>
+              </div>
+            </button>
+            <sc-if value="{{ rule.open }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 32px 32px 32px; font-size: 15px; line-height: 1.75; color: #B0B0B0;">
+                <div style="padding-left: 50px; border-left: 1px solid rgba(206,17,38,0.4); padding-top: 8px;">
+                  {{ rule.body }}
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============== TERMÍNY ============== -->
+  <sc-if value="{{ isTerminy }}" hint-placeholder-val="{{ false }}">
+  <div class="pad-section" style="padding: 140px 32px 120px;">
+    <div style="max-width: 1240px; margin: 0 auto;">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; color: #CE1126; text-transform: uppercase;">Sezóna 2026</span>
+        <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08);"></div>
+      </div>
+      <h1 class="h1-mobile" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px, 8vw, 120px); line-height: 0.9; letter-spacing: 0.005em; margin: 0 0 56px; color: #fff; font-weight: 400;">
+        Termíny &<br><span style="color: #CE1126;">registrace</span>
+      </h1>
+
+      <!-- Filters -->
+      <div style="display: flex; flex-direction: column; gap: 16px; padding: 24px 0; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 40px;">
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; color: #B0B0B0; text-transform: uppercase; min-width: 60px;">Město:</span>
+          <sc-for list="{{ cityFilters }}" as="f" hint-placeholder-count="5">
+            <button onClick="{{ f.onClick }}" style="background: {{ f.bg }}; border: 1px solid {{ f.border }}; color: {{ f.color }}; padding: 8px 16px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all .2s;">
+              {{ f.label }} <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; opacity: 0.6;">({{ f.count }})</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; color: #B0B0B0; text-transform: uppercase; min-width: 60px;">Věk:</span>
+          <sc-for list="{{ ageFilters }}" as="f" hint-placeholder-count="4">
+            <button onClick="{{ f.onClick }}" style="background: {{ f.bg }}; border: 1px solid {{ f.border }}; color: {{ f.color }}; padding: 8px 16px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: all .2s;">
+              {{ f.label }} <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; opacity: 0.6;">({{ f.count }})</span>
+            </button>
+          </sc-for>
+          <div style="flex: 1;"></div>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #B0B0B0;">{{ filteredCountLabel }}</span>
+        </div>
+      </div>
+
+      <!-- Camps list -->
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <sc-for list="{{ campsFiltered }}" as="camp" hint-placeholder-count="5">
+          <div class="grid-camps-detail" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); padding: 32px 36px; transition: all .25s;" style-hover="border-color: rgba(206,17,38,0.4); background: #181818;">
+            <div>
+              <div style="font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: #fff; line-height: 0.95; letter-spacing: 0.005em;">{{ camp.dateLabel }}</div>
+              <div style="font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: #CE1126; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px;">{{ camp.weekday }}</div>
+            </div>
+            <div>
+              <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 0.02em; margin: 0 0 8px; color: #fff; font-weight: 400; line-height: 1;">{{ camp.title }}</h3>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #B0B0B0; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 14px;">{{ camp.location }} · věk {{ camp.ageCategory }}</div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <sc-for list="{{ camp.tags }}" as="tag" hint-placeholder-count="2">
+                  <span style="padding: 4px 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: #B0B0B0; text-transform: uppercase;">{{ tag }}</span>
+                </sc-for>
+              </div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px;">Obsazenost</div>
+              <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px;">
+                <span style="font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #fff; line-height: 1;">{{ camp.taken }}</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #B0B0B0;">/ {{ camp.capacity }} míst</span>
+              </div>
+              <div style="height: 2px; background: rgba(255,255,255,0.08); position: relative;">
+                <div style="position: absolute; inset: 0 auto 0 0; width: {{ camp.fillPercent }}%; background: {{ camp.barColor }};"></div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #fff; line-height: 1; letter-spacing: 0.02em;">{{ camp.price }}</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px;">Vč. DPH</div>
+              <button onClick="{{ camp.register }}" disabled="{{ camp.disabled }}" style="background: {{ camp.ctaBg }}; color: {{ camp.ctaColor }}; border: none; padding: 14px 22px; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: {{ camp.cursor }}; width: 100%; transition: all .2s;" style-hover="filter: brightness(1.1);">
+                {{ camp.ctaLabel }}
+              </button>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="padding: 80px 32px; text-align: center; border: 1px dashed rgba(255,255,255,0.1);">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #fff; letter-spacing: 0.02em; margin-bottom: 12px;">Žádný termín</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase;">Zkus jiný filtr</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============== PLATBA ============== -->
+  <sc-if value="{{ isPlatba }}" hint-placeholder-val="{{ false }}">
+  <div class="pad-section" style="padding: 140px 32px 120px;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; background: rgba(60,180,100,0.1); border: 1px solid rgba(60,180,100,0.3); margin-bottom: 32px;">
+        <span style="width: 6px; height: 6px; background: #4ade80; border-radius: 50%;"></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; color: #4ade80; text-transform: uppercase;">Registrace přijata · VS {{ paymentVS }}</span>
+      </div>
+
+      <h1 class="h1-mobile" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px, 8vw, 120px); line-height: 0.9; letter-spacing: 0.005em; margin: 0 0 24px; color: #fff; font-weight: 400;">
+        Zaplať a máš<br><span style="color: #CE1126;">místo</span>
+      </h1>
+      <p style="font-size: 17px; line-height: 1.6; color: #B0B0B0; max-width: 600px; margin: 0 0 64px;">
+        Naskenuj QR kód v bankovní aplikaci nebo zadej údaje ručně. Platbu očekáváme do <strong style="color:#fff;">7 dní</strong>, jinak místo uvolníme.
+      </p>
+
+      <div class="grid-2" style="grid-template-columns: 380px 1fr; gap: 56px; align-items: start;">
+        <!-- QR card -->
+        <div style="background: #141414; border: 1px solid rgba(255,255,255,0.08); padding: 32px;">
+          <div style="background: #fff; padding: 20px; display: flex; align-items: center; justify-content: center; aspect-ratio: 1;">
+            {{ qrImage }}
+          </div>
+          <div style="margin-top: 20px; text-align: center;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: #fff; letter-spacing: 0.02em; line-height: 1;">{{ paymentAmount }}</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase; margin-top: 6px;">SPAYD · CZK</div>
+          </div>
+        </div>
+
+        <!-- Manual details -->
+        <div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 24px;">Bankovní převod</div>
+          <div style="display: flex; flex-direction: column; gap: 1px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.06); margin-bottom: 24px;">
+            <sc-for list="{{ paymentRows }}" as="row" hint-placeholder-count="5">
+              <div style="background: #0A0A0A; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.25em; text-transform: uppercase;">{{ row.label }}</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #fff; text-align: right; word-break: break-all;">{{ row.value }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <button onClick="{{ copyPayment }}" style="background: #CE1126; border: none; color: #fff; padding: 16px 24px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 12px; margin-right: 12px;" style-hover="background: #A50E1F; box-shadow: 0 0 24px rgba(206,17,38,0.4);">
+            {{ copyButtonLabel }}
+            <span style="font-family: 'JetBrains Mono', monospace;">⎘</span>
+          </button>
+          <button onClick="{{ goHome }}" style="background: transparent; border: none; color: #B0B0B0; padding: 16px 8px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: color .2s;" style-hover="color: #fff;">
+            ← Zpět na úvod
+          </button>
+
+          <div style="margin-top: 40px; padding: 24px; background: rgba(206,17,38,0.04); border-left: 2px solid #CE1126;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #CE1126; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 10px;">Důležité</div>
+            <p style="font-size: 14px; line-height: 1.6; color: #B0B0B0; margin: 0;">
+              Použij variabilní symbol <strong style="color:#fff;">{{ paymentVS }}</strong>, ať platbu spárujeme. Po připsání ti pošleme potvrzení e‑mailem.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============== MERCH ============== -->
+  <sc-if value="{{ isMerch }}" hint-placeholder-val="{{ false }}">
+  <div class="pad-section" style="padding: 140px 32px 120px;">
+    <div style="max-width: 1240px; margin: 0 auto;">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; color: #CE1126; text-transform: uppercase;">Shop · Brzy v prodeji</span>
+        <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08);"></div>
+      </div>
+      <h1 class="h1-mobile" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px, 8vw, 120px); line-height: 0.9; letter-spacing: 0.005em; margin: 0 0 24px; color: #fff; font-weight: 400;">
+        Merch<br><span style="color: #CE1126;">P31</span>
+      </h1>
+      <p style="font-size: 17px; line-height: 1.6; color: #B0B0B0; max-width: 600px; margin: 0 0 64px;">
+        Trička, mikiny, čepice a pomůcky. Spuštění před začátkem letní sezóny.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;">
+        <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+          <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); transition: all .3s; filter: saturate(0.6);" style-hover="border-color: rgba(206,17,38,0.3); transform: translateY(-2px); filter: saturate(1);">
+            <div class="ph-stripes" style="aspect-ratio: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+              <div style="position: absolute; top: 16px; left: 16px; padding: 4px 10px; background: rgba(10,10,10,0.7); backdrop-filter: blur(4px); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #CE1126; letter-spacing: 0.2em; text-transform: uppercase;">Brzy</div>
+              <span style="font-family: 'Bebas Neue', sans-serif; font-size: 80px; color: rgba(255,255,255,0.08); letter-spacing: 0.02em;">31</span>
+            </div>
+            <div style="padding: 20px 22px; opacity: 0.7;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">{{ p.category }}</div>
+              <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.02em; margin: 0 0 12px; color: #fff; font-weight: 400; line-height: 1;">{{ p.name }}</h3>
+              <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #B0B0B0; filter: blur(4px);">{{ p.priceLabel }}</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase;">— —</span>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="margin-top: 80px; padding: 56px; background: #141414; border: 1px solid rgba(255,255,255,0.06); text-align: center;">
+        <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 0.02em; margin: 0 0 12px; color: #fff; font-weight: 400;">Chceš vědět první?</h3>
+        <p style="font-size: 15px; color: #B0B0B0; margin: 0 0 28px;">Nech nám email. Pošleme jednu zprávu, až spustíme shop.</p>
+        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+          <input type="email" placeholder="tvuj@email.cz" style="background: #0A0A0A; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 14px 18px; font-family: 'Inter', sans-serif; font-size: 14px; min-width: 280px; outline: none;">
+          <button style="background: #CE1126; color: #fff; border: none; padding: 14px 22px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: background .2s;" style-hover="background: #A50E1F;">Notify me</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============== FOTO ============== -->
+  <sc-if value="{{ isFoto }}" hint-placeholder-val="{{ false }}">
+  <div class="pad-section" style="padding: 140px 32px 120px;">
+    <div style="max-width: 1400px; margin: 0 auto;">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; color: #CE1126; text-transform: uppercase;">Galerie · z ledu</span>
+        <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08);"></div>
+      </div>
+      <h1 class="h1-mobile" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px, 8vw, 120px); line-height: 0.9; letter-spacing: 0.005em; margin: 0 0 24px; color: #fff; font-weight: 400;">
+        Foto<br><span style="color: #CE1126;">& video</span>
+      </h1>
+      <p style="font-size: 17px; line-height: 1.6; color: #B0B0B0; max-width: 600px; margin: 0 0 40px;">
+        Záběry z předchozích ročníků. Klikni na dlaždici pro detail. <!-- až přijdou fotky z léta, nahradí ta čísla -->
+      </p>
+
+      <!-- Filter -->
+      <div style="display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap;">
+        <sc-for list="{{ galleryFilters }}" as="f" hint-placeholder-count="3">
+          <button onClick="{{ f.onClick }}" style="background: {{ f.bg }}; border: 1px solid {{ f.border }}; color: {{ f.color }}; padding: 10px 20px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; transition: all .2s;">
+            {{ f.label }} <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; opacity: 0.6;">({{ f.count }})</span>
+          </button>
+        </sc-for>
+      </div>
+
+      <!-- Masonry -->
+      <div class="masonry">
+        <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="12">
+          <div onClick="{{ g.onClick }}" style="break-inside: avoid; margin-bottom: 12px; position: relative; cursor: pointer; overflow: hidden; transition: transform .25s;" style-hover="transform: scale(0.99);">
+            <div class="{{ g.stripeClass }}" style="aspect-ratio: {{ g.aspect }}; display: flex; align-items: center; justify-content: center; padding: 16px; position: relative;">
+              <!-- Reálné médium -->
+              <sc-if value="{{ g.isPhoto }}" hint-placeholder-val="{{ true }}">
+                <img src="{{ g.src }}" alt="{{ g.label }}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;">
+              </sc-if>
+              <sc-if value="{{ g.isVideo }}" hint-placeholder-val="{{ false }}">
+                <video src="{{ g.src }}" muted="{{ true }}" playsinline="{{ true }}" preload="metadata" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+              </sc-if>
+              <!-- Video play overlay -->
+              <sc-if value="{{ g.isVideo }}" hint-placeholder-val="{{ false }}">
+                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.25);">
+                  <div style="width: 64px; height: 64px; background: rgba(206,17,38,0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 8px rgba(206,17,38,0.15);">
+                    <span style="width: 0; height: 0; border-left: 16px solid #fff; border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 4px;"></span>
+                  </div>
+                </div>
+                <div style="position: absolute; top: 12px; right: 12px; padding: 4px 8px; background: rgba(10,10,10,0.7); backdrop-filter: blur(4px); font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #fff; letter-spacing: 0.2em; text-transform: uppercase;">Video</div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============== KONTAKT ============== -->
+  <sc-if value="{{ isKontakt }}" hint-placeholder-val="{{ false }}">
+  <div class="pad-section" style="padding: 140px 32px 120px;">
+    <div style="max-width: 1240px; margin: 0 auto;">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em; color: #CE1126; text-transform: uppercase;">Kontakt</span>
+        <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.08);"></div>
+      </div>
+      <h1 class="h1-mobile" style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px, 8vw, 120px); line-height: 0.9; letter-spacing: 0.005em; margin: 0 0 64px; color: #fff; font-weight: 400;">
+        Napiš<br><span style="color: #CE1126;">nám</span>
+      </h1>
+
+      <div class="grid-2" style="align-items: start;">
+        <div>
+          <div style="display: flex; flex-direction: column; gap: 32px;">
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 10px;">E‑mail</div>
+              <a href="mailto:info@pavelka31kemp.cz" style="font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #fff; letter-spacing: 0.02em; text-decoration: none; transition: color .2s;" style-hover="color: #CE1126;">info@pavelka31kemp.cz</a>
+              <div style="font-size: 12px; color: #6a6a6a; margin-top: 6px; font-style: italic;"><!-- sem náš ostrý mail, až poběží doména --></div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 10px;">Telefon</div>
+              <a href="tel:+420777111031" style="font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #fff; letter-spacing: 0.02em; text-decoration: none; transition: color .2s;" style-hover="color: #CE1126;">+420 XXX XXX XXX</a>
+              <div style="font-size: 12px; color: #6a6a6a; margin-top: 6px; font-style: italic;"><!-- Jardovo číslo, až mi ho pošle --></div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 10px;">Instagram</div>
+              <a href="https://www.instagram.com/pavelka_jaroslav31" target="_blank" rel="noopener" style="font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #fff; letter-spacing: 0.02em; text-decoration: none; transition: color .2s; display: inline-flex; align-items: center; gap: 14px;" style-hover="color: #CE1126;">
+                @pavelka_jaroslav31
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 20px;">↗</span>
+              </a>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 10px;">Provozovatel</div>
+              <div style="font-size: 15px; color: #fff; line-height: 1.7;">
+                Pavelka 31 Kemp z.s.<br>
+                <span style="color: #B0B0B0;"><!-- doplnit IČO a sídlo spolku --></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map placeholder -->
+          <div style="margin-top: 48px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 12px;">Kde nás najdeš</div>
+            <div class="ph-stripes" style="aspect-ratio: 16/10; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; border: 1px solid rgba(255,255,255,0.06); position: relative;">
+              <!-- Stylized map glyph -->
+              <div style="width: 28px; height: 36px; border: 1.5px solid #CE1126; border-radius: 14px 14px 14px 2px; transform: rotate(-45deg); position: relative;">
+                <div style="position: absolute; inset: 6px; border-radius: 50%; background: #CE1126;"></div>
+              </div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.3em; text-transform: uppercase;">Google Maps embed</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.25);"><!-- sem vložit embed z Map (zimák) --></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); padding: 40px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #CE1126; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 24px;">Napiš zprávu</div>
+          <div style="display: flex; flex-direction: column; gap: 18px;">
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">Jméno</div>
+              <input type="text" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 14px 16px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: border .2s;" style-focus="border-color: #CE1126;">
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">E‑mail</div>
+              <input type="email" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 14px 16px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none;" style-focus="border-color: #CE1126;">
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">Zpráva</div>
+              <textarea rows="5" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 14px 16px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; resize: vertical;" style-focus="border-color: #CE1126;"></textarea>
+            </div>
+            <button style="background: #CE1126; color: #fff; border: none; padding: 16px 24px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: all .2s; margin-top: 8px;" style-hover="background: #A50E1F; box-shadow: 0 0 24px rgba(206,17,38,0.4);">
+              Odeslat zprávu →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============== FOOTER ============== -->
+  <footer class="pad-section" style="background: #050505; border-top: 1px solid rgba(255,255,255,0.06); padding: 80px 32px 32px;">
+    <div style="max-width: 1240px; margin: 0 auto;">
+      <div class="grid-footer" style="padding-bottom: 56px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+        <div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+            <div style="width: 42px; height: 42px; border: 1.5px solid #CE1126; display: flex; align-items: center; justify-content: center; background: #0A0A0A;">
+              <span style="font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #fff; letter-spacing: 0.02em; line-height: 1;">31</span>
+            </div>
+            <span style="font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.12em; color: #fff;">PAVELKA 31 KEMP</span>
+          </div>
+          <p style="font-size: 14px; color: #B0B0B0; line-height: 1.7; max-width: 360px; margin: 0 0 24px;">Brankářský kemp Jaroslava Pavelky. Individuální trénink pro brankáře 8–18 let.</p>
+          <div style="display: flex; gap: 8px;">
+            <a href="https://www.instagram.com/pavelka_jaroslav31" target="_blank" rel="noopener" style="width: 38px; height: 38px; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all .2s;" style-hover="border-color: #CE1126; color: #CE1126;">
+              <span style="font-family: 'Bebas Neue', sans-serif; font-size: 14px;">IG</span>
+            </a>
+            <a href="mailto:info@pavelka31kemp.cz" style="width: 38px; height: 38px; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; transition: all .2s;" style-hover="border-color: #CE1126; color: #CE1126;">
+              <span style="font-family: 'Bebas Neue', sans-serif; font-size: 14px;">@</span>
+            </a>
+          </div>
+        </div>
+        <div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px;">Kemp</div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button onClick="{{ goTerminy }}" style="background: none; border: none; cursor: pointer; padding: 0; color: #fff; font-family: 'Inter', sans-serif; font-size: 14px; text-align: left;" style-hover="color: #CE1126;">Termíny</button>
+            <button onClick="{{ goPravidla }}" style="background: none; border: none; cursor: pointer; padding: 0; color: #fff; font-family: 'Inter', sans-serif; font-size: 14px; text-align: left;" style-hover="color: #CE1126;">Pravidla</button>
+            <button onClick="{{ goFoto }}" style="background: none; border: none; cursor: pointer; padding: 0; color: #fff; font-family: 'Inter', sans-serif; font-size: 14px; text-align: left;" style-hover="color: #CE1126;">Galerie</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px;">Shop</div>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button onClick="{{ goMerch }}" style="background: none; border: none; cursor: pointer; padding: 0; color: #fff; font-family: 'Inter', sans-serif; font-size: 14px; text-align: left;" style-hover="color: #CE1126;">Merch</button>
+            <button onClick="{{ goKontakt }}" style="background: none; border: none; cursor: pointer; padding: 0; color: #fff; font-family: 'Inter', sans-serif; font-size: 14px; text-align: left;" style-hover="color: #CE1126;">Kontakt</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px;">Sledujte</div>
+          <a href="https://www.instagram.com/pavelka_jaroslav31" target="_blank" rel="noopener" style="font-family: 'Inter', sans-serif; font-size: 14px; color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: color .2s;" style-hover="color: #CE1126;">
+            @pavelka_jaroslav31 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">↗</span>
+          </a>
+        </div>
+      </div>
+      <div style="padding-top: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6a6a6a; letter-spacing: 0.2em; text-transform: uppercase;">© 2026 Pavelka 31 Kemp · Všechna práva vyhrazena</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6a6a6a; letter-spacing: 0.2em; text-transform: uppercase;">Brankářský kemp · CZE</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============== REGISTRATION MODAL ============== -->
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeModal }}" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; overflow-y: auto;">
+      <div onClick="{{ stopProp }}" style="background: #141414; border: 1px solid rgba(255,255,255,0.08); max-width: 720px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative;">
+        <div style="padding: 32px 40px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: start; justify-content: space-between; gap: 24px;">
+          <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #CE1126; letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 10px;">Registrace</div>
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: #fff; letter-spacing: 0.02em; line-height: 1;">{{ modalCampTitle }}</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #B0B0B0; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 8px;">{{ modalCampMeta }}</div>
+          </div>
+          <button onClick="{{ closeModal }}" style="width: 36px; height: 36px; background: none; border: 1px solid rgba(255,255,255,0.15); color: #fff; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 16px; transition: all .2s; flex-shrink: 0;" style-hover="border-color: #CE1126; color: #CE1126;">×</button>
+        </div>
+
+        <div style="padding: 32px 40px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <!-- Jméno -->
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">Jméno <span style="color:#CE1126;">*</span></div>
+              <input type="text" placeholder="Tomáš" value="{{ fFirstName }}" onChange="{{ onFirstName }}" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none;" style-focus="border-color: #CE1126;">
+            </div>
+            <!-- Příjmení -->
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">Příjmení <span style="color:#CE1126;">*</span></div>
+              <input type="text" placeholder="Novák" value="{{ fLastName }}" onChange="{{ onLastName }}" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none;" style-focus="border-color: #CE1126;">
+            </div>
+            <!-- Datum narození (full) -->
+            <div style="grid-column: span 2;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">Datum narození <span style="color:#CE1126;">*</span></div>
+              <input type="date" value="{{ fBirthDate }}" onChange="{{ onBirthDate }}" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; color-scheme: dark;" style-focus="border-color: #CE1126;">
+            </div>
+            <!-- Email -->
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">E‑mail <span style="color:#CE1126;">*</span></div>
+              <input type="email" placeholder="jana@email.cz" value="{{ fEmail }}" onChange="{{ onEmail }}" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none;" style-focus="border-color: #CE1126;">
+            </div>
+            <!-- Telefon -->
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">Telefon <span style="color:#CE1126;">*</span></div>
+              <input type="tel" placeholder="+420 …" value="{{ fPhone }}" onChange="{{ onPhone }}" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none;" style-focus="border-color: #CE1126;">
+            </div>
+            <!-- Rodič jméno -->
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">Jméno rodiče</div>
+              <input type="text" placeholder="Jana Nováková" value="{{ fParentName }}" onChange="{{ onParentName }}" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none;" style-focus="border-color: #CE1126;">
+            </div>
+            <!-- Rodič telefon -->
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">Telefon na rodiče</div>
+              <input type="tel" placeholder="+420 …" value="{{ fParentPhone }}" onChange="{{ onParentPhone }}" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none;" style-focus="border-color: #CE1126;">
+            </div>
+            <!-- Dress velikost (select, full) -->
+            <div style="grid-column: span 2;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">Velikost dresu</div>
+              <select value="{{ fDressSize }}" onChange="{{ onDressSize }}" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; color-scheme: dark;" style-focus="border-color: #CE1126;">
+                <option value="">Vyber velikost…</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+              </select>
+            </div>
+            <!-- Poznámka -->
+            <div style="grid-column: span 2;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px;">Poznámka / zdravotní omezení</div>
+              <textarea rows="3" value="{{ fNote }}" onChange="{{ onNote }}" placeholder="Alergie, zdravotní omezení, požadavky…" style="width: 100%; background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); color: #fff; padding: 12px 14px; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; resize: vertical;" style-focus="border-color: #CE1126;"></textarea>
+            </div>
+          </div>
+
+          <!-- Checkboxy -->
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 24px;">
+            <label style="display: flex; align-items: start; gap: 12px; cursor: pointer; padding: 14px 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);">
+              <input type="checkbox" checked="{{ fAgreeRules }}" onChange="{{ toggleAgreeRules }}" style="margin-top: 2px; accent-color: #CE1126;">
+              <span style="font-size: 13px; color: #B0B0B0; line-height: 1.5;">Souhlasím s <button onClick="{{ goPravidlaFromModal }}" style="background: none; border: none; padding: 0; color: #CE1126; text-decoration: underline; cursor: pointer; font: inherit;">pravidly kempu</button> <span style="color:#CE1126;">*</span></span>
+            </label>
+            <label style="display: flex; align-items: start; gap: 12px; cursor: pointer; padding: 14px 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);">
+              <input type="checkbox" checked="{{ fAgreeGdpr }}" onChange="{{ toggleAgreeGdpr }}" style="margin-top: 2px; accent-color: #CE1126;">
+              <span style="font-size: 13px; color: #B0B0B0; line-height: 1.5;">Souhlasím se zpracováním osobních údajů podle GDPR <span style="color:#CE1126;">*</span></span>
+            </label>
+          </div>
+        </div>
+
+        <div style="padding: 24px 40px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; background: #0F0F0F;">
+          <div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #B0B0B0; letter-spacing: 0.2em; text-transform: uppercase;">K platbě</div>
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: #fff; letter-spacing: 0.02em; line-height: 1;">{{ modalPrice }}</div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button onClick="{{ closeModal }}" style="background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 14px 22px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;" style-hover="border-color: #fff;">Zrušit</button>
+            <button onClick="{{ submitRegistration }}" disabled="{{ submitDisabled }}" style="background: {{ submitBg }}; color: #fff; border: none; padding: 14px 26px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: {{ submitCursor }}; opacity: {{ submitOpacity }};">Pokračovat k platbě →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============== LIGHTBOX ============== -->
+  <sc-if value="{{ lightboxOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeLightbox }}" style="position: fixed; inset: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); z-index: 250; display: flex; align-items: center; justify-content: center; padding: 24px;">
+      <button onClick="{{ closeLightbox }}" style="position: absolute; top: 24px; right: 24px; width: 44px; height: 44px; background: none; border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 18px; z-index: 2;" style-hover="border-color: #CE1126;">×</button>
+      <button onClick="{{ prevLightbox }}" style="position: absolute; left: 24px; top: 50%; transform: translateY(-50%); width: 56px; height: 56px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 24px; z-index: 2;" style-hover="border-color: #CE1126;">‹</button>
+      <button onClick="{{ nextLightbox }}" style="position: absolute; right: 24px; top: 50%; transform: translateY(-50%); width: 56px; height: 56px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 24px; z-index: 2;" style-hover="border-color: #CE1126;">›</button>
+      <div onClick="{{ stopProp }}" style="max-width: 1100px; width: 100%;">
+        <div style="display: flex; align-items: center; justify-content: center; background: #000; min-height: 200px; max-height: 82vh; overflow: hidden;">
+          <sc-if value="{{ lightboxIsPhoto }}" hint-placeholder-val="{{ true }}">
+            <img src="{{ lightboxSrc }}" alt="{{ lightboxLabel }}" style="max-width: 100%; max-height: 82vh; object-fit: contain; display: block;">
+          </sc-if>
+          <sc-if value="{{ lightboxIsVideo }}" hint-placeholder-val="{{ false }}">
+            <video src="{{ lightboxSrc }}" controls="{{ true }}" autoplay="{{ true }}" muted="{{ true }}" playsinline="{{ true }}" style="max-width: 100%; max-height: 82vh; display: block; background: #000;"></video>
+          </sc-if>
+        </div>
+        <div style="margin-top: 16px; display: flex; justify-content: flex-end; align-items: center; padding: 0 4px;">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #B0B0B0; letter-spacing: 0.2em;">{{ lightboxPos }}</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+<template id="__bundler_thumbnail" data-bg-color="#0A0A0A">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0A0A0A"></rect>
+    <rect x="470" y="280" width="260" height="240" fill="none" stroke="#CE1126" stroke-width="10"></rect>
+    <text x="600" y="470" font-family="Arial, sans-serif" font-weight="700" font-size="150" fill="#ffffff" text-anchor="middle">31</text>
+    <rect x="710" y="270" width="22" height="22" fill="#CE1126"></rect>
+  </svg>
+</template></x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1440, &quot;height&quot;: 900}}">
+class Component extends DCLogic {
+  // ============================================================
+  //  PLATBA — POZOR: tohle jsou zatím vymyšlené údaje!
+  //  Než to pustíme ven, přepsat za reálný účet (vezmu od Jardy z banky).
+  // ============================================================
+  PAYMENT_IBAN = 'CZ6508000000001234567890';   // náš IBAN (zatím fake)
+  PAYMENT_BIC = 'GIBACZPX';                     // BIC banky — ověřit podle účtu
+  PAYMENT_ACCOUNT_PRETTY = '1234567890 / 0800'; // číslo účtu, jak ho lidi znají
+  // ============================================================
+
+  state = {
+    page: 'home',
+    menuOpen: false,
+    modalOpen: false,
+    modalCampId: null,
+    form: {
+      firstName: '', lastName: '', birthDate: '', email: '', phone: '',
+      parentName: '', parentPhone: '', dressSize: '', note: '',
+      agreeRules: false, agreeGdpr: false,
+    },
+    submittedPaymentId: null,
+    locationFilter: 'all',
+    ageFilter: 'all',
+    galleryFilter: 'all',
+    openRule: 0,
+    lightboxIndex: null,
+    copyLabel: 'Zkopírovat platební údaje',
+  };
+
+  // ============================================================
+  //  TERMÍNY — zatím nástřel. Finální data doplním podle toho,
+  //  co stihneme zarezervovat na zimácích.
+  // ============================================================
+  CAMPS = [
+    { id: 'c1', title: 'Letní kemp Praha',     location: 'O2 arena tréninková hala, Praha',  city: 'praha',  ageCategory: '8-12',  ageBucket: 'mladsi', dateLabel: '12.–16. 7. 2026', weekday: 'Pondělí — Pátek', capacity: 20, taken: 12, price: '3 500 Kč', priceCzk: 3500, tags: ['Začátečníci+', 'Letní'] },
+    { id: 'c2', title: 'Intenzivní kemp Kladno', location: 'ČEZ Stadion, Kladno',             city: 'kladno', ageCategory: '13-15', ageBucket: 'stredni', dateLabel: '20.–24. 7. 2026', weekday: 'Pondělí — Pátek', capacity: 14, taken: 13, price: '4 200 Kč', priceCzk: 4200, tags: ['Pokročilí', 'Letní'] },
+    { id: 'c3', title: 'Pre‑season kemp',      location: 'Aréna Letňany, Praha',               city: 'praha',  ageCategory: '16-18', ageBucket: 'starsi', dateLabel: '10.–15. 8. 2026', weekday: 'Pondělí — Sobota', capacity: 12, taken: 4,  price: '4 800 Kč', priceCzk: 4800, tags: ['Pokročilí', 'Pre‑season'] },
+    { id: 'c4', title: 'Letní kemp Brno',      location: 'DRFG Arena, Brno',                   city: 'brno',   ageCategory: '8-12',  ageBucket: 'mladsi', dateLabel: '24.–28. 8. 2026', weekday: 'Pondělí — Pátek', capacity: 16, taken: 16, price: '3 500 Kč', priceCzk: 3500, tags: ['Začátečníci', 'Letní'] },
+    { id: 'c5', title: 'Podzimní víkend',      location: 'ČEZ Stadion, Kladno',               city: 'kladno', ageCategory: '13-15', ageBucket: 'stredni', dateLabel: '17.–19. 10. 2026', weekday: 'Pátek — Neděle', capacity: 12, taken: 6,  price: '2 400 Kč', priceCzk: 2400, tags: ['Pokročilí', 'Víkend'] },
+  ];
+
+  OFFERINGS = [
+    { num: '01', glyph: '⟁', title: 'Individuální trénink', desc: 'Poměr 4 brankáři : 1 trenér. Žádné stání ve frontě, žádný kompromis.' },
+    { num: '02', glyph: '▶', title: 'Video analýza',         desc: 'Každý den dvě sekce. Z ledu i z lavice. Vidíš, co jsi neviděl.' },
+    { num: '03', glyph: '◇', title: 'Profi výbava',          desc: 'Kompletní zázemí — ležení, výstroj, pomůcky. Doneseš si jen ruce.' },
+    { num: '04', glyph: '⊹', title: 'Mentoring',             desc: 'Hlava nad hokejkou. Jak číst střelu, jak rozumět svému stylu.' },
+  ];
+
+  // Jardova kariéra — ještě s ním projít přesné roky a kluby
+  CAREER = [
+    { years: '2014–2017', club: 'HC Junior — mládež', dotColor: '#B0B0B0' },
+    { years: '2017–2019', club: 'Reprezentace U18 / U20', dotColor: '#B0B0B0' },
+    { years: '2019–2022', club: 'Extraliga — host', dotColor: '#B0B0B0' },
+    { years: '2022–dnes', club: 'Extraliga — Praha #31', dotColor: '#CE1126' },
+  ];
+
+  // Pravidla — můj nástřel z hlavy, ať je vidět struktura.
+  // Storno a GDPR znění ještě dát na kontrolu právničce!
+  RULES = [
+    { num: '01', title: 'Obecná pravidla kempu',     body: 'Účast od 8 let, rodič / zákonný zástupce podepisuje účastnickou smlouvu. Tréninky probíhají dle denního harmonogramu, který obdržíš e‑mailem 14 dní před kempem. Příchod 30 min před prvním tréninkem, odchod po video analýze. Po celou dobu kempu zajištěn pedagogický dozor. Účastník respektuje pokyny trenérského týmu a chová se ohleduplně k ostatním.' },
+    { num: '02', title: 'Povinná výbava',            body: 'Kompletní brankářská výstroj v dobrém technickém stavu (helma s funkčním krytím povinně!), 2× hokejka, 2× košile, ručník, lahev na pití (min. 1 L), svačina na každý den, hygienické potřeby. Doporučujeme vlastní masku. Sušárna v aréně k dispozici, ale druhá sada výstroje pomůže. Stuha na hokejku, izolepa, drobné opravy zajistíme.' },
+    { num: '03', title: 'Storno podmínky',           body: 'Storno více než 30 dní před začátkem kempu: vratka 100 % bez storno poplatku. 30–14 dní: vratka 50 % uhrazené částky. Méně než 14 dní: bez vratky, lze najít vlastního náhradníka (stejná věková kategorie). Při zdravotních důvodech s doložením lékařské zprávy vrátíme 80 % bez ohledu na termín storna.' },
+    { num: '04', title: 'Zdravotní způsobilost',     body: 'Rodič / zákonný zástupce při příjezdu odevzdá podepsané prohlášení o zdravotní způsobilosti dítěte (formulář pošleme e‑mailem). Uveď všechny alergie, chronická onemocnění a užívané léky. Při akutním onemocnění (teplota, infekce) účast není možná. Na kempu je k dispozici zdravotník, vážnější zranění řešíme s rodičem a místní záchrannou službou.' },
+    { num: '05', title: 'GDPR a souhlas s focením',  body: 'Registrací uděluješ souhlas se zpracováním osobních údajů pro účely organizace kempu, evidence účastníků, plateb a komunikace. Souhlasíš s pořízením fotografií a videozáznamů během tréninků a jejich použitím v propagačních materiálech kempu (web, Instagram, Facebook). Nesouhlas s focením lze uvést v poznámce při registraci. Souhlas lze kdykoliv odvolat e‑mailem na info@pavelka31kemp.cz.' },
+    { num: '06', title: 'Pojištění',                 body: 'Kemp má sjednanou pojistku odpovědnosti za škodu vůči třetím osobám. Účastník je povinen mít vlastní zdravotní pojištění (kartička pojišťovny) a doporučujeme úrazové pojištění. Škody na svěřené výstroji aréně řeší rodič / zákonný zástupce. Ztráty osobních věcí v šatně kemp nehradí.' },
+  ];
+
+  // Galerie — reálné fotky a videa z kempu (soubory ve složce media/).
+  // Až přijdou další, jen sem přidám řádek.
+  GALLERY = [
+    { id: 1,  tag: 'Kemp',      label: 'Společný kemp',  isVideo: false, src: 'media/tym.jpg',              aspect: '4/3',   stripeClass: 'ph-stripes' },
+    { id: 2,  tag: 'Trénink',   label: 'Na ledě',        isVideo: true,  src: 'media/video-1.mp4',          aspect: '9/16',  stripeClass: 'ph-stripes-red' },
+    { id: 3,  tag: 'Slavia',    label: 'S klukama',      isVideo: false, src: 'media/slavia-deti.jpg',      aspect: '16/10', stripeClass: 'ph-stripes' },
+    { id: 4,  tag: 'Berani',    label: 'Gameday',        isVideo: false, src: 'media/gameday.jpg',          aspect: '4/5',   stripeClass: 'ph-stripes-red' },
+    { id: 5,  tag: 'Zákroky',   label: 'Reflexy',        isVideo: true,  src: 'media/video-2.mp4',          aspect: '9/16',  stripeClass: 'ph-stripes' },
+    { id: 6,  tag: 'Liberec',   label: 'Tygří karta',    isVideo: false, src: 'media/liberec-karta.jpg',    aspect: '3/4',   stripeClass: 'ph-stripes' },
+    { id: 7,  tag: 'Sestřih',   label: 'Z tréninku',     isVideo: true,  src: 'media/video-3.mp4',          aspect: '4/5',   stripeClass: 'ph-stripes-red' },
+    { id: 8,  tag: 'Slavia',    label: 'Rozcvička',      isVideo: false, src: 'media/slavia-rozcvicka.jpg', aspect: '1/1',   stripeClass: 'ph-stripes' },
+    { id: 9,  tag: 'Highlight', label: 'Zákrok',         isVideo: true,  src: 'media/video-4.mp4',          aspect: '9/16',  stripeClass: 'ph-stripes' },
+    { id: 10, tag: 'Video',     label: 'Na ledě II',     isVideo: true,  src: 'media/video-5.mp4',          aspect: '4/5',   stripeClass: 'ph-stripes-red' },
+    { id: 11, tag: 'Video',     label: 'Trénink',        isVideo: true,  src: 'media/video-6.mp4',          aspect: '9/16',  stripeClass: 'ph-stripes' },
+  ];
+
+  PRODUCTS = [
+    { id: 1, category: 'Apparel',     name: 'Tričko P31 Black',   priceLabel: '690 Kč' },
+    { id: 2, category: 'Apparel',     name: 'Mikina Goalie Crew', priceLabel: '1 690 Kč' },
+    { id: 3, category: 'Accessories', name: 'Kšiltovka 31',       priceLabel: '590 Kč' },
+    { id: 4, category: 'Apparel',     name: 'Hřejivá vesta',      priceLabel: '1 990 Kč' },
+    { id: 5, category: 'Gear',        name: 'Taška P31',          priceLabel: '890 Kč' },
+    { id: 6, category: 'Accessories', name: 'Šála Klub 31',       priceLabel: '490 Kč' },
+  ];
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState && prevState.page !== this.state.page) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }
+
+  goTo = (page) => this.setState({ page, modalOpen: false, lightboxIndex: null, menuOpen: false });
+  toggleMenu = () => this.setState(s => ({ menuOpen: !s.menuOpen }));
+  closeMenu = () => this.setState({ menuOpen: false });
+  stopProp = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
+
+  openRegistration = (campId) => {
+    const camp = this.CAMPS.find(c => c.id === campId);
+    if (!camp || camp.taken >= camp.capacity) return;
+    this.setState({ modalOpen: true, modalCampId: campId });
+  };
+  closeModal = () => this.setState({ modalOpen: false });
+
+  setFormField = (field, value) => {
+    this.setState(s => ({ form: Object.assign({}, s.form, { [field]: value }) }));
+  };
+
+  isFormValid = () => {
+    const f = this.state.form;
+    return f.firstName.trim() && f.lastName.trim() && f.birthDate && f.email.trim() && f.phone.trim() && f.agreeRules && f.agreeGdpr;
+  };
+
+  submitRegistration = () => {
+    if (!this.isFormValid()) return;
+    const camp = this.CAMPS.find(c => c.id === this.state.modalCampId);
+    if (!camp) return;
+    const ts = Date.now().toString().slice(-6);
+    const vs = '20260' + ts.slice(-3);
+    this.setState({ modalOpen: false, submittedPaymentId: vs, page: 'platba' });
+  };
+
+  // SPAYD generator — formát: SPD*1.0*ACC:CZ...+BIC*AM:...*CC:CZK*MSG:...*X-VS:...
+  buildSpayd = (amount, vs, msg) => {
+    const acc = this.PAYMENT_IBAN + '+' + this.PAYMENT_BIC;
+    return `SPD*1.0*ACC:${acc}*AM:${amount}.00*CC:CZK*MSG:${msg}*X-VS:${vs}`;
+  };
+
+  _currentPaymentCamp = () => this.CAMPS.find(c => c.id === this.state.modalCampId) || this.CAMPS[0];
+
+  copyPayment = () => {
+    const camp = this._currentPaymentCamp();
+    const f = this.state.form;
+    const vs = this.state.submittedPaymentId || '20260001';
+    const msg = `Pavelka31 Kemp - ${f.firstName || 'Jmeno'} ${f.lastName || 'Prijmeni'}`;
+    const text = `Pavelka 31 Kemp — ${camp.title}\nČástka: ${camp.priceCzk} Kč\nČíslo účtu: ${this.PAYMENT_ACCOUNT_PRETTY}\nIBAN: ${this.PAYMENT_IBAN}\nBIC: ${this.PAYMENT_BIC}\nVS: ${vs}\nZpráva: ${msg}`;
+    try {
+      navigator.clipboard.writeText(text);
+      this.setState({ copyLabel: 'Zkopírováno ✓' });
+      setTimeout(() => this.setState({ copyLabel: 'Zkopírovat platební údaje' }), 2000);
+    } catch (err) {
+      this.setState({ copyLabel: 'Zkopírovat platební údaje' });
+    }
+  };
+
+  openLightbox = (idx) => this.setState({ lightboxIndex: idx });
+  closeLightbox = () => this.setState({ lightboxIndex: null });
+  nextLightbox = (e) => {
+    if (e) e.stopPropagation();
+    const items = this._galleryFiltered();
+    this.setState(s => ({ lightboxIndex: (s.lightboxIndex + 1) % items.length }));
+  };
+  prevLightbox = (e) => {
+    if (e) e.stopPropagation();
+    const items = this._galleryFiltered();
+    this.setState(s => ({ lightboxIndex: (s.lightboxIndex - 1 + items.length) % items.length }));
+  };
+
+  _galleryFiltered = () => {
+    if (this.state.galleryFilter === 'photos') return this.GALLERY.filter(g => !g.isVideo);
+    if (this.state.galleryFilter === 'videos') return this.GALLERY.filter(g => g.isVideo);
+    return this.GALLERY;
+  };
+
+  renderVals() {
+    const page = this.state.page;
+    const navColor = (key) => page === key ? '#fff' : '#B0B0B0';
+
+    const navItems = [
+      { label: 'Domů',     key: 'home',     onClick: () => this.goTo('home'),     mobileClick: () => this.goTo('home') },
+      { label: 'Termíny',  key: 'terminy',  onClick: () => this.goTo('terminy'),  mobileClick: () => this.goTo('terminy') },
+      { label: 'Pravidla', key: 'pravidla', onClick: () => this.goTo('pravidla'), mobileClick: () => this.goTo('pravidla') },
+      { label: 'Foto',     key: 'foto',     onClick: () => this.goTo('foto'),     mobileClick: () => this.goTo('foto') },
+      { label: 'Merch',    key: 'merch',    onClick: () => this.goTo('merch'),    mobileClick: () => this.goTo('merch') },
+      { label: 'Kontakt',  key: 'kontakt',  onClick: () => this.goTo('kontakt'),  mobileClick: () => this.goTo('kontakt') },
+    ].map(i => ({ ...i, active: page === i.key, color: navColor(i.key) }));
+
+    // Hamburger animations
+    const hamTop = this.state.menuOpen ? 'translateY(7px) rotate(45deg)' : 'none';
+    const hamBot = this.state.menuOpen ? 'translateY(-7px) rotate(-45deg)' : 'none';
+    const hamMidOpacity = this.state.menuOpen ? 0 : 1;
+
+    // ===== Camp helpers =====
+    const enhanceCamp = (c) => {
+      const fill = Math.round((c.taken / c.capacity) * 100);
+      const full = c.taken >= c.capacity;
+      const almostFull = !full && fill >= 80;
+      let statusLabel, statusColor;
+      if (full) { statusLabel = 'Obsazeno · čekací listina'; statusColor = '#B0B0B0'; }
+      else if (almostFull) { statusLabel = `Posledních ${c.capacity - c.taken} míst`; statusColor = '#CE1126'; }
+      else { statusLabel = `${c.capacity - c.taken} míst volných`; statusColor = '#B0B0B0'; }
+      return {
+        ...c,
+        fillPercent: fill,
+        statusLabel,
+        statusColor,
+        barColor: full ? '#444' : '#CE1126',
+        ctaLabel: full ? 'Obsazeno' : 'Přihlásit se',
+        ctaArrow: full ? '—' : '→',
+        ctaColor: full ? '#B0B0B0' : '#fff',
+        ctaBg: full ? '#2a2a2a' : '#CE1126',
+        disabled: full,
+        cursor: full ? 'not-allowed' : 'pointer',
+        register: () => this.openRegistration(c.id),
+        onClick: () => this.openRegistration(c.id),
+      };
+    };
+
+    // ===== Home: camps preview (first 3) =====
+    const campsPreview = this.CAMPS.slice(0, 3).map(enhanceCamp);
+
+    // ===== Termíny: filters =====
+    const cities = [
+      { key: 'all', label: 'Vše' },
+      { key: 'praha', label: 'Praha' },
+      { key: 'kladno', label: 'Kladno' },
+      { key: 'brno', label: 'Brno' },
+    ];
+    const ages = [
+      { key: 'all', label: 'Vše' },
+      { key: 'mladsi', label: '8–12 let' },
+      { key: 'stredni', label: '13–15 let' },
+      { key: 'starsi', label: '16–18 let' },
+    ];
+    const cityFilters = cities.map(c => {
+      const active = this.state.locationFilter === c.key;
+      const count = c.key === 'all' ? this.CAMPS.length : this.CAMPS.filter(cc => cc.city === c.key).length;
+      return { label: c.label, count, bg: active ? '#CE1126' : 'transparent', border: active ? '#CE1126' : 'rgba(255,255,255,0.15)', color: active ? '#fff' : '#B0B0B0', onClick: () => this.setState({ locationFilter: c.key }) };
+    });
+    const ageFilters = ages.map(a => {
+      const active = this.state.ageFilter === a.key;
+      const count = a.key === 'all' ? this.CAMPS.length : this.CAMPS.filter(cc => cc.ageBucket === a.key).length;
+      return { label: a.label, count, bg: active ? '#CE1126' : 'transparent', border: active ? '#CE1126' : 'rgba(255,255,255,0.15)', color: active ? '#fff' : '#B0B0B0', onClick: () => this.setState({ ageFilter: a.key }) };
+    });
+    let campsRaw = this.CAMPS;
+    if (this.state.locationFilter !== 'all') campsRaw = campsRaw.filter(c => c.city === this.state.locationFilter);
+    if (this.state.ageFilter !== 'all') campsRaw = campsRaw.filter(c => c.ageBucket === this.state.ageFilter);
+    const campsFiltered = campsRaw.map(enhanceCamp);
+    const n = campsRaw.length;
+    const filteredCountLabel = `${n} ${n === 1 ? 'termín' : (n >= 2 && n <= 4 ? 'termíny' : 'termínů')}`;
+
+    // ===== Rules =====
+    const rules = this.RULES.map((r, i) => {
+      const open = this.state.openRule === i;
+      return { ...r, open, rot: open ? 45 : 0, toggle: () => this.setState(s => ({ openRule: s.openRule === i ? -1 : i })) };
+    });
+
+    // ===== Modal (registration) =====
+    const modalCamp = this.CAMPS.find(c => c.id === this.state.modalCampId) || this.CAMPS[0];
+    const f = this.state.form;
+    const valid = this.isFormValid();
+    const submitBg = valid ? '#CE1126' : '#3a1a1d';
+    const submitCursor = valid ? 'pointer' : 'not-allowed';
+    const submitOpacity = valid ? 1 : 0.6;
+
+    // ===== Payment =====
+    const paymentCamp = this._currentPaymentCamp();
+    const vs = this.state.submittedPaymentId || '20260001';
+    const amount = paymentCamp.priceCzk;
+    const msg = `Pavelka31 Kemp - ${(f.firstName || 'Jmeno').trim()} ${(f.lastName || 'Prijmeni').trim()}`;
+    const spayd = this.buildSpayd(amount, vs, msg);
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=0&qzone=0&data=${encodeURIComponent(spayd)}`;
+    const qrImage = page === 'platba'
+      ? React.createElement('img', { src: qrUrl, alt: 'QR platba', style: { width: '100%', height: '100%', display: 'block' } })
+      : null;
+    const paymentRows = [
+      { label: 'Částka',              value: `${amount.toLocaleString('cs-CZ')} Kč` },
+      { label: 'Číslo účtu',          value: this.PAYMENT_ACCOUNT_PRETTY },
+      { label: 'IBAN',                value: this.PAYMENT_IBAN },
+      { label: 'Variabilní symbol',   value: vs },
+      { label: 'Zpráva pro příjemce', value: msg },
+    ];
+
+    // ===== Gallery =====
+    const gFilters = [
+      { key: 'all',    label: 'Vše',   count: this.GALLERY.length },
+      { key: 'photos', label: 'Fotky', count: this.GALLERY.filter(g => !g.isVideo).length },
+      { key: 'videos', label: 'Videa', count: this.GALLERY.filter(g => g.isVideo).length },
+    ];
+    const galleryFilters = gFilters.map(gf => {
+      const active = this.state.galleryFilter === gf.key;
+      return { label: gf.label, count: gf.count, bg: active ? '#CE1126' : 'transparent', border: active ? '#CE1126' : 'rgba(255,255,255,0.15)', color: active ? '#fff' : '#B0B0B0', onClick: () => this.setState({ galleryFilter: gf.key, lightboxIndex: null }) };
+    });
+    const filteredGallery = this._galleryFiltered();
+    const gallery = filteredGallery.map((g, i) => ({
+      ...g,
+      isPhoto: !g.isVideo,
+      num: i + 1,
+      numStr: String(i + 1).padStart(2, '0'),
+      onClick: () => this.openLightbox(i),
+    }));
+    const lightboxOpen = this.state.lightboxIndex !== null;
+    const lbItem = lightboxOpen ? filteredGallery[this.state.lightboxIndex] : null;
+
+    return {
+      // page state
+      isHome: page === 'home',
+      isPravidla: page === 'pravidla',
+      isTerminy: page === 'terminy',
+      isPlatba: page === 'platba',
+      isMerch: page === 'merch',
+      isFoto: page === 'foto',
+      isKontakt: page === 'kontakt',
+
+      // nav
+      navItems,
+      menuOpen: this.state.menuOpen,
+      toggleMenu: this.toggleMenu,
+      closeMenu: this.closeMenu,
+      hamTop, hamBot, hamMidOpacity,
+      goHome: () => this.goTo('home'),
+      goTerminy: () => this.goTo('terminy'),
+      goPravidla: () => this.goTo('pravidla'),
+      goPravidlaFromModal: (e) => { if (e) e.preventDefault(); this.setState({ modalOpen: false }); this.goTo('pravidla'); },
+      goMerch: () => this.goTo('merch'),
+      goFoto: () => this.goTo('foto'),
+      goKontakt: () => this.goTo('kontakt'),
+      mobileGoTerminy: () => this.goTo('terminy'),
+      scrollToAbout: () => {
+        const el = document.getElementById('about-section');
+        if (el) window.scrollTo({ top: el.offsetTop - 60, behavior: 'smooth' });
+      },
+      stopProp: this.stopProp,
+
+      // home
+      offerings: this.OFFERINGS,
+      career: this.CAREER,
+      campsPreview,
+
+      // termíny
+      cityFilters, ageFilters,
+      campsFiltered,
+      filteredCountLabel,
+      noResults: campsFiltered.length === 0,
+
+      // pravidla
+      rules,
+
+      // modal
+      modalOpen: this.state.modalOpen,
+      modalCampTitle: modalCamp.title,
+      modalCampMeta: `${modalCamp.location} · ${modalCamp.dateLabel}`,
+      modalPrice: modalCamp.price,
+      fFirstName: f.firstName, onFirstName: (e) => this.setFormField('firstName', e.target.value),
+      fLastName: f.lastName,   onLastName: (e) => this.setFormField('lastName', e.target.value),
+      fBirthDate: f.birthDate, onBirthDate: (e) => this.setFormField('birthDate', e.target.value),
+      fEmail: f.email,         onEmail: (e) => this.setFormField('email', e.target.value),
+      fPhone: f.phone,         onPhone: (e) => this.setFormField('phone', e.target.value),
+      fParentName: f.parentName, onParentName: (e) => this.setFormField('parentName', e.target.value),
+      fParentPhone: f.parentPhone, onParentPhone: (e) => this.setFormField('parentPhone', e.target.value),
+      fDressSize: f.dressSize, onDressSize: (e) => this.setFormField('dressSize', e.target.value),
+      fNote: f.note,           onNote: (e) => this.setFormField('note', e.target.value),
+      fAgreeRules: f.agreeRules, toggleAgreeRules: () => this.setFormField('agreeRules', !f.agreeRules),
+      fAgreeGdpr: f.agreeGdpr,   toggleAgreeGdpr: () => this.setFormField('agreeGdpr', !f.agreeGdpr),
+      closeModal: this.closeModal,
+      submitRegistration: this.submitRegistration,
+      submitDisabled: !valid,
+      submitBg, submitCursor, submitOpacity,
+
+      // payment
+      qrImage,
+      paymentAmount: `${amount.toLocaleString('cs-CZ')} Kč`,
+      paymentRows,
+      paymentVS: vs,
+      copyPayment: this.copyPayment,
+      copyButtonLabel: this.state.copyLabel,
+
+      // gallery
+      galleryFilters,
+      gallery,
+      lightboxOpen,
+      lightboxLabel: lbItem ? lbItem.label : '',
+      lightboxTag: lbItem ? lbItem.tag : '',
+      lightboxIsVideo: lbItem ? lbItem.isVideo : false,
+      lightboxIsPhoto: lbItem ? !lbItem.isVideo : false,
+      lightboxSrc: lbItem ? lbItem.src : '',
+      lightboxNumStr: lbItem ? String(this.state.lightboxIndex + 1).padStart(2, '0') : '',
+      lightboxStripeClass: lbItem ? lbItem.stripeClass : 'ph-stripes',
+      lightboxPos: lbItem ? `${this.state.lightboxIndex + 1} / ${filteredGallery.length}` : '',
+      closeLightbox: this.closeLightbox,
+      nextLightbox: this.nextLightbox,
+      prevLightbox: this.prevLightbox,
+
+      // products
+      products: this.PRODUCTS,
+    };
+  }
+}
+</script>
+</body>
+</html>
