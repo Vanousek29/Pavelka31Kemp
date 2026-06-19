@@ -10,13 +10,13 @@ Stránka je statická, nepotřebuje build krok. Stačí servírovat `index.html`
 - **Netlify / Vercel** — přetáhni složku nebo připoj repo, žádné build commandy, publish directory = root.
 - **Vlastní hosting** — nahraj `index.html` na server.
 
-`index.html` je self-contained (runtime, styly i úvodní foto jsou vložené uvnitř). **Složku `media/` nasazuj vždy spolu s `index.html`** — fotky a videa galerie se načítají z ní za běhu (záměrně nejsou vložené, ať HTML nenabobtná o megabajty videa). Online připojení je potřeba jen pro:
+`index.html` je kopie zdroje (`Pavelka 31 Kemp.dc.html`) a běhového skriptu. **Nasazuj vždy spolu: `index.html` + `support.js` + složku `media/`** — runtime se načítá z `./support.js`, fotky a videa galerie z `media/` za běhu (záměrně nejsou vložené, ať HTML nenabobtná o megabajty videa). Online připojení je potřeba jen pro:
 - Google Fonts (Bebas Neue, Inter, JetBrains Mono),
 - generování QR kódu (api.qrserver.com).
 
 ## Vývoj / úpravy
 
-Zdroj je **`Pavelka 31 Kemp.dc.html`** (+ `support.js` runtime). Po úpravách zdroje znovu vygeneruj `index.html` (rebundle).
+Zdroj je **`Pavelka 31 Kemp.dc.html`** (+ `support.js` runtime). Po úpravách zdroje zkopíruj soubor na `index.html` (jsou identické) — `support.js` nech beze změny.
 
 ## Než půjde web naostro — doplnit od klienta
 
